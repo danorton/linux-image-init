@@ -88,5 +88,4 @@ if [ -s /root/.ssh/authorized_keys ]; then
 fi
 
 # clean up
-set -x
-rm -f "$0"
+rm -vf "$0"
