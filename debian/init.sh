@@ -31,7 +31,12 @@ echo "Script completed successfully" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfil
 # delete our selfsame script
 rm -vf "$0" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
 
-# Shut down (Triggers a Lassie watchdog reboot)
-echo "Shutting down (triggers Lassie reboot)" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
-shutdown -hP now 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
-
+if [ "$LINODE_ID" ]; then
+  # Shut down (Triggers a Lassie watchdog reboot)
+  echo "Shutting down (triggers Lassie reboot)" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+  shutdown -hP now 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+else
+  # reboot
+  echo "Rebooting" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+  reboot 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+fi
