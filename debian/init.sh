@@ -11,6 +11,13 @@ logfile=/var/log/linux-init-script.log
 # stage 2 script file
 stage2file=/tmp/debian-init-stage2.sh
 
+if [ -z "$WEIRD_FETCH_URL" ]; then
+  export WEIRD_FETCH_URL="$1"
+  shift
+  export WEIRD_PUPPET_MASTER="$1"
+  shift
+fi
+
 if [ "$WEIRD_LAN_IPV4" ]; then
   export WEIRD_LAN_IPV4_IP=${WEIRD_LAN_IPV4///*}
   export WEIRD_LAN_IPV4_MASK=${WEIRD_LAN_IPV4##*/}
