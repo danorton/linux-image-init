@@ -2,9 +2,9 @@
 set -e
 
 # Allow public key for root ssh login
-if [ "$WEIRD_SSH_KEY_URL" ]; then
+if [ ! -s /root/.ssh/authorized_keys ]; then
   mkdir -p /root/.ssh
-  curl -sS "$WEIRD_SSH_KEY_URL" >> /root/.ssh/authorized_keys
+  curl -sS "$WEIRD_FETCH_URL/linux/ssh_authorized_keys" >> /root/.ssh/authorized_keys
   chmod -R o-rwx /root/.ssh
 fi
 
@@ -50,32 +50,31 @@ fi
 # Get basic but non-standard puppet functions
 mkdir -p /var/lib/puppet/lib/facter
 curl -sSo /var/lib/puppet/lib/facter/meminbytes.rb \
-     https://weirdmasters.com/puppet/facter/meminbytes.rb
+     "$WEIRD_FETCH_URL/puppet/facter/meminbytes.rb"
 
 # Add puppet agent configuration
-cat << '__EOF__' >> /etc/puppet/puppet.conf
+cat << __EOF__ >> /etc/puppet/puppet.conf
 [agent]
-server = puppet.weirdmasters.com
+server = $WEIRD_PUPPET_MASTER
 listen = true
 __EOF__
 
-# puppet auth configuration to allow "kick" from master
-curl -sSo /etc/puppet/auth.conf \
-     https://weirdmasters.com/puppet/auth.conf
+# allow master to control this slave
+cat << __EOF__ >> /etc/puppet/auth.conf
+# Allow master to control us
+path    /run
+method  save
+auth    any
+allow   $WEIRD_PUPPET_MASTER
+__EOF__
 
-# start puppet at sysinit
+# start puppet at next (and every) boot
 echo -e "1,\$s/START=no/START=yes/\nwq" | ed /etc/default/puppet \
  || true
 
 # Our initial set of aliases for new accounts
-cat << '__EOF__' > /etc/skel/.bash_aliases
-unalias -a
-alias mv='mv -i'
-alias cp='cp -i'
-alias rm='rm -i'
-alias ls='ls --color=auto'
-alias ll='ls -alF'
-__EOF__
+curl -sSo /etc/skel/.bash_aliases \
+     "$WEIRD_FETCH_URL/linux/skel/.bash_aliases"
 
 # re-init root account with updated skeleton files
 cp /etc/skel/.profile \
@@ -91,4 +90,3 @@ fi
 # clean up
 set -x
 rm -f "$0"
-

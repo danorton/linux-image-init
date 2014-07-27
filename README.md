@@ -1,4 +1,4 @@
 linux-image-init
 ================
 
-Initialize Linux image for management with Puppet agent
+Files for server deployment

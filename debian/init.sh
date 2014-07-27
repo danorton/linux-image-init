@@ -2,13 +2,14 @@
 set -e
 #yu di efs
 # <UDF name="WEIRD_NEW_HOSTNAME" Label="Hostname" />
+# <UDF name="WEIRD_PUPPET_MASTER" Label="Puppet master host" />
 # <UDF name="WEIRD_FETCH_URL"  Label="URL for fetching init data" />
 # <UDF name="WEIRD_LAN_IPV4"  Label="Private IPv4/mask" />
 
 # Log file for this script
 logfile=/var/log/linux-init-script.log
 # stage 2 script file
-stage2file=/tmp/linux-init-stage2.sh
+stage2file=/tmp/debian-init-stage2.sh
 
 if [ "$WEIRD_LAN_IPV4" ]; then
   export WEIRD_LAN_IPV4_IP=${WEIRD_LAN_IPV4///*}
@@ -21,7 +22,7 @@ apt-get -qy update
 apt-get -qy install moreutils
 
 # create a script file
-curl -sSo "$stage2file" "$WEIRD_FETCH_URL/init-stage2"
+curl -sSo "$stage2file" "$WEIRD_FETCH_URL/debian/init-stage2.sh"
 
 # run the script we just fetched and log its output
 bash "$stage2file" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
