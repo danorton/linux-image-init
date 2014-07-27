@@ -1,4 +1,4 @@
-linux-image-init
-================
+weird-server-deployment
+=======================
 
 Files for server deployment
