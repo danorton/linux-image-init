@@ -16,6 +16,10 @@ if [ -z "$WEIRD_FETCH_URL" ]; then
   shift
   export WEIRD_PUPPET_MASTER="$1"
   shift
+  if [ "$1" ]; then
+    export WEIRD_NEW_HOSTNAME="$1"
+    shift
+  fi
 fi
 
 if [ "$WEIRD_LAN_IPV4" ]; then
