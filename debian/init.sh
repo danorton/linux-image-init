@@ -36,18 +36,18 @@ apt-get -qy install moreutils
 curl -sSo "$stage2file" "$WEIRD_FETCH_URL/debian/init-stage2.sh"
 
 # run the script we just fetched and log its output
-bash "$stage2file" < /dev/null 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
-echo "Script completed successfully" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+bash "$stage2file" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' | tee -a $logfile
+echo "Script completed successfully" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' | tee -a $logfile
 
 # delete our selfsame script
-rm -vf "$0" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+rm -vf "$0" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' | tee -a $logfile
 
 if [ "$LINODE_ID" ]; then
   # Shut down (Triggers a Lassie watchdog reboot)
-  echo "Shutting down (triggers Lassie reboot)" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
-  shutdown -hP now 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+  echo "Shutting down (triggers Lassie reboot)" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' | tee -a $logfile
+  shutdown -hP now 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' | tee -a $logfile
 else
   # reboot
-  echo "Rebooting" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
-  reboot 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+  echo "Rebooting" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' | tee -a $logfile
+  reboot 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' | tee -a $logfile
 fi
