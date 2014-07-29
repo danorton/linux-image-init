@@ -2,8 +2,8 @@
 set -e
 #yu di efs
 # <UDF name="WEIRD_NEW_HOSTNAME" Label="Hostname" />
-# <UDF name="WEIRD_PUPPET_MASTER" Label="Puppet master host" />
 # <UDF name="WEIRD_FETCH_URL"  Label="URL for fetching init data" />
+# <UDF name="WEIRD_PUPPET_MASTER" Label="Puppet master host" />
 # <UDF name="WEIRD_LAN_IPV4"  Label="Private IPv4/mask" />
 
 # Log file for this script
@@ -36,7 +36,7 @@ apt-get -qy install moreutils
 curl -sSo "$stage2file" "$WEIRD_FETCH_URL/debian/init-stage2.sh"
 
 # run the script we just fetched and log its output
-bash "$stage2file" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
+bash "$stage2file" < /dev/null 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
 echo "Script completed successfully" 2>&1 | ts '%Y-%m-%d %H:%M:%.S%z' >> $logfile
 
 # delete our selfsame script
