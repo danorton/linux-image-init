@@ -14,6 +14,9 @@ if [ "$WEIRD_NEW_HOSTNAME" ]; then
   hostname -F /etc/hostname
 fi
 cat /etc/hostname > /etc/mailname
+echo -e "g/^domain\>/d\n1i\ndomain weirdmasters.com\n.\nwq" \
+  | ed resolv.conf \
+ || true
 
 # get rid of exim4 and fetch puppet
 # we need "ed" for this selfsame script
